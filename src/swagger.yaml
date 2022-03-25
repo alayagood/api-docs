@@ -1,0 +1,311 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: 'web-api'
+  license:
+    name: Benevity
+servers:
+  - url: 'https://alaya.reviews/api'
+  - url: 'http://localhost:7000/api'
+paths:
+  /organization/selector:
+    get:
+      summary: Organization selector endpoint
+      description: >
+        Returns a list of paginated options for selection.
+        
+        Filtering:
+        
+        - Organizations with attribute `locked` at `true` are filtered out.
+        
+        - If `search` is provided as a request query parameter, a regex case-insensitive search is performed on the organization `name`
+        
+        - `page` (skip) and `pageSize` (limit) narrows the amount of elements retrieved.
+        
+        
+        Sorting:
+        
+        - If `search` is not provided, order is by `creationDate`, most recent *first*.
+        
+        - If `search` is provided, alphabetical order on name.
+        
+        
+        Initial element:
+        
+        - `init` parameter is the initial value of the selector. It will follow the same pattern as the selector options (`OrganizationSelectorOption`).
+        
+        - If an entity is not found by its `cuid`, the element is omitted from the response.
+      operationId: listOrganizationOptions
+      security:
+        - CookieAuth: [ADMINISTRATOR]
+      x-auth-roles: 
+        - ADMINISTRATOR
+      tags:
+        - organization
+        - selector
+      parameters:
+        - name: init
+          in: query
+          description: >
+            `init` parameter is the initial value of the selector.
+            
+            
+            The value can be multiple cuids of organizations.
+            It is a query parameter that corresponds exactly to the cuids of one or more organizations, separated by commas.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/cuid'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/textSearch'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    description: Organizations options list 
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/organizationSelectorOption'
+                  init: 
+                    description: Initial selector organizations options list 
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizationSelectorOption'
+                  page:
+                    $ref: '#/components/schemas/page'
+                  pageSize:
+                    $ref: '#/components/schemas/pageSize'
+                  count:
+                    description: elements count over all pages
+                    type: integer
+                    minimum: 0
+                  hasMore:
+                    description: true if more pages can be loaded
+                    type: boolean
+                  search:
+                    description: the filter requested
+                    type: string
+        '400':
+          $ref: '#/components/responses/400_Malformed'
+        '401':
+          $ref: '#/components/responses/401_Unauthorized'
+        '403':
+          $ref: '#/components/responses/403_Forbidden'
+        default:
+          $ref: '#/components/responses/500_Server'
+  /charity/selector:
+    get:
+      summary: Charity selector endpoint
+      description: >
+        Filtering:
+        
+        - Charities with attribute `locked` at `true` are filtered out.
+        
+        - If `search` is provided as a request query parameter, a regex case-insensitive search is performed on the organization `name`
+        
+        - `page` (skip) and `pageSize` (limit) narrows the amount of elements retrieved.
+        
+        
+        Sorting:
+        
+        - If `search` is not provided, order is by `creationDate`, most recent *first*.
+        
+        - If `search` is provided, alphabetical order on name.
+        
+        
+        Initial element:
+        
+        - `init` parameter is the initial value of the selector. It will follow the same pattern as the selector options (`OrganizationSelectorOption`).
+        
+        - If an entity is not found by its `cuid`, the element is omitted from the response.
+      operationId: listCharityOptions
+      security:
+        - CookieAuth: [ADMINISTRATOR, SUPERVISOR]
+      x-auth-roles: 
+        - ADMINISTRATOR
+        - SUPERVISOR  
+      tags:
+        - charity
+        - selector
+      parameters:
+        - name: init
+          in: query
+          description: >
+            `init` parameter is the initial value of the selector.
+            
+            
+            The value can be multiple cuids of organizations.
+            It is a query parameter that corresponds exactly to the cuids of one or more organizations, separated by commas.
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/cuid'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/textSearch'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    description: Organizations options list 
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/organizationSelectorOption'
+                  init: 
+                    description: Initial selector organizations options list 
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/organizationSelectorOption'
+                  page:
+                    $ref: '#/components/schemas/page'
+                  pageSize:
+                    $ref: '#/components/schemas/pageSize'
+                  count:
+                    description: elements count over all pages
+                    type: integer
+                    minimum: 0
+                  hasMore:
+                    description: true if more pages can be loaded
+                    type: boolean
+                  search:
+                    description: the filter requested
+                    type: string
+        '400':
+          $ref: '#/components/responses/400_Malformed'
+        '401':
+          $ref: '#/components/responses/401_Unauthorized'
+        '403':
+          $ref: '#/components/responses/403_Forbidden'
+        default:
+          $ref: '#/components/responses/500_Server'
+components:
+  parameters:    
+    page:
+      in: query
+      name: page
+      description: The pagination page number
+      schema:
+        $ref: '#/components/schemas/page'
+    pageSize:
+      in: query
+      name: pageSize
+      description: The pagination page size.
+      schema: 
+        $ref: '#/components/schemas/pageSize'
+    textSearch:
+      in: query
+      name: search
+      description: >
+          A free text value to narrow the search depending on context.
+          Could be a name for regex or a strict cuid.
+      schema:
+        type: string
+        minLength: 2
+  responses:
+    400_Malformed:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    401_Unauthorized:
+      description: Requires authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    403_Forbidden:
+      description: Requires the correct role or context
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    404_NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    409_Conflict:
+      description: Resource conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    500_Server:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    cuid:
+      description: See npm [cuid package](https://www.npmjs.com/package/cuid) for details
+      type: string
+      pattern: '^c[a-zA-Z\d]+$'
+    page:
+      type: integer
+      minimum: 0
+      default: 0
+    pageSize:
+      description: For `default`, see `DEFAULT_PAGE_SIZE`, and for `maximum` see `MAX_PAGE_SIZE` 
+      type: integer
+      default: 10
+      minimum: 10
+      maximum: 50
+    organizationSelectorOption:
+      type: object
+      required:
+        - name
+        - cuid
+        - logoUrl
+      properties:
+        cuid:
+          $ref: '#/components/schemas/cuid'
+        name:
+          type: string
+        logoUrl:
+          type: string
+    Error:
+      description: Errors JSON object are rendered by the `errorRenderer` by the global catcher on the API server.
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          enum: [400, 401, 403, 404, 500]
+        message:
+          type: string
+        stack:
+          type: string
+          example:
+            This is a stack trace, visible in development mode only
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: sk-4_15_0
+      x-auth-roles:
+        - USER
+        - SUPERVISOR
+        - ADMINISTRATOR
+        - TECHNICAL
+      description: >
+        The requester must provide a session ID in the cookie of the request.
+        The session name varies depending on the release build number to force people to reconnect after each release.
+security:
+    - CookieAuth: [USER]

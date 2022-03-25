@@ -1,0 +1,62 @@
+<div class="main-content">
+  <h2><a name=""></a></h2>
+  <p>This is the  API</p>
+
+  <h2><a name="listCharityOptions"></a>listCharityOptions</h2>
+  <hr>
+  <p></p>
+  <p>Filtering: - Charities with attribute &#x60;locked&#x60; at &#x60;true&#x60; are filtered out. - If &#x60;search&#x60; is provided as a request query parameter, a regex case-insensitive search is performed on the organization &#x60;name&#x60; - &#x60;page&#x60; (skip) and &#x60;pageSize&#x60; (limit) narrows the amount of elements retrieved.  Sorting: - If &#x60;search&#x60; is not provided, order is by &#x60;creationDate&#x60;, most recent *first*. - If &#x60;search&#x60; is provided, alphabetical order on name.  Initial element: - &#x60;init&#x60; parameter is the initial value of the selector. It will follow the same pattern as the selector options (&#x60;OrganizationSelectorOption&#x60;). - If an entity is not found by its &#x60;cuid&#x60;, the element is omitted from the response. </p>
+  <h3 class="section">URL</h3>
+  <code>https://alaya.reviews/api/charity/selector</code>
+  <h3 class="section">HTTP Method</h3>
+  <code>GET</code>
+  <h3 class="section">Response Type</h3>
+  <div class="model" data-model="inline_response_200"><a href="">inline_response_200</a></div>
+  <h3 class="section">Parameters</h3>
+  <ul>
+	  <li class="parameter">
+      
+      <span class="param-in">Query: </span>
+      
+      
+      
+      <span class="param-name">init</span>
+      <span class="param-type">List(cuid)</span>
+      
+      <p class="param-description">&#x60;init&#x60; parameter is the initial value of the selector.  The value can be multiple cuids of organizations. It is a query parameter that corresponds exactly to the cuids of one or more organizations, separated by commas. </p>
+	  </li>
+	  <li class="parameter">
+      
+      <span class="param-in">Query: </span>
+      
+      
+      
+      <span class="param-name">page</span>
+      <span class="param-type">page</span>
+      
+      <p class="param-description">The pagination page number</p>
+	  </li>
+	  <li class="parameter">
+      
+      <span class="param-in">Query: </span>
+      
+      
+      
+      <span class="param-name">pageSize</span>
+      <span class="param-type">pageSize</span>
+      
+      <p class="param-description">The pagination page size.</p>
+	  </li>
+	  <li class="parameter">
+      
+      <span class="param-in">Query: </span>
+      
+      
+      
+      <span class="param-name">search</span>
+      <span class="param-type">String</span>
+      
+      <p class="param-description">A free text value to narrow the search depending on context. Could be a name for regex or a strict cuid. </p>
+	  </li>
+  </ul>
+</div>
